@@ -1,6 +1,9 @@
 from checks.iam import checks
 import importlib
 import argparse
+from colorama import Fore, Style
+import time
+
 
 available_groups = ['iam', 'security_groups']
 
@@ -9,6 +12,7 @@ regions = ['eu-north-1', 'ap-south-1', 'eu-west-3', 'eu-west-2', 'eu-west-1', 'a
            'us-west-1', 'us-west-2']
 
 if __name__ == "__main__":
+    start_time = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument("--groups", nargs='+', help="Select group")
     parser.add_argument("--regions", nargs='+', help="Select regions")
@@ -23,14 +27,17 @@ if __name__ == "__main__":
     if args.regions:
         regions = args.regions
     else:
-        regions = ['eu-west-1'] # TODO ADD REGION DEFAULT FROM FILE
+        regions = ['eu-west-1']  # TODO ADD REGION DEFAULT FROM FILE
     for group in groups:
         lib = importlib.import_module(f'checks.{group}.checks')
         for region in regions:
             client = lib.CheckClient(region)
             for check in client.available_checks:
                 method_to_call = getattr(lib, check)
-                print(method_to_call(client.client).title())
-                print(method_to_call(client.client).description())
+                print(f"{Fore.YELLOW} {method_to_call(client.client).title()} {Style.RESET_ALL}")
+                print(f"{Fore.BLUE} {method_to_call(client.client).description()} {Style.RESET_ALL}")
                 method_to_call(client.client).execute()
+
+    print("--- %s seconds ---" % (time.time() - start_time))
+
 

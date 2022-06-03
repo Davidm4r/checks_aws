@@ -111,17 +111,16 @@ class IamDisable30DaysCredentials(Check):
         return "High"
 
     def execute(self):
-        print(self.client)
         response = self.client.list_users()
         for user in response['Users']:
             try:
                 time_since_insertion = datetime.datetime.now(datetime.timezone.utc) - user['PasswordLastUsed']
                 if time_since_insertion.days > 30:
                     print(
-                        f"{Fore.RED}FAIL!{Style.RESET_ALL} User {user['UserName']} has not logged into the console in the past 90 days")
+                        f"{Fore.RED}FAIL!{Style.RESET_ALL} User {user['UserName']} has not logged into the console in the past 30 days")
                 else:
                     print(
-                        f"{Fore.GREEN}PASS!{Style.RESET_ALL} User {user['UserName']} has logged into the console in the past 90 days")
+                        f"{Fore.GREEN}PASS!{Style.RESET_ALL} User {user['UserName']} has logged into the console in the past 30 days")
             except KeyError:
                 pass
 
