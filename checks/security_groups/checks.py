@@ -25,7 +25,7 @@ class Check14(Check):
 
     def execute(self):
 
-        client = self.client = boto3.client('ec2')
+        client = self.client
         result = client.describe_security_groups()
         for a in result['SecurityGroups']:
             print(a)
