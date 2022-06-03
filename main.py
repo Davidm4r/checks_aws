@@ -1,8 +1,15 @@
-from checks.iam import Check13
+from checks.iam import checks
+import importlib
 
-c = Check13()
-print(c.title())
-print(c.description())
-c.execute()
+groups = ['iam', 'security_groups']
 
+for group in groups:
+    lib = importlib.import_module(f'checks.{group}.checks')
+    client = lib.CheckClient()
+    for check in client.available_checks:
+        method_to_call = getattr(lib, check)
+        print(method_to_call(client.client).title())
+        print(method_to_call(client.client).description())
+        print("\n")
+        method_to_call(client.client).execute()
 

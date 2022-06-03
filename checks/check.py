@@ -9,7 +9,14 @@ class Severity(Enum):
     LOW = 'low'
 
 
+class Cloud(Enum):
+    AWS = 'aws',
+    GOOGLE = 'google',
+
+
 class Check(ABC):
+    def __init__(self, client):
+        self.client = client
 
     @property
     @abstractmethod
@@ -20,6 +27,7 @@ class Check(ABC):
     @abstractmethod
     def description(self):
         return "Description"
+
 
     @property
     @abstractmethod
