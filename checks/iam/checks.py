@@ -60,10 +60,14 @@ iam-user-with-password-and-key
 iam-policy-allows-privilege-escalation
 '''
 
-class CheckClient(object):
-    def __init__(self):
-        self.client = boto3.client('iam')
+class CheckClient():
+    def __init__(self, region=""):
+        if region:
+            self.client = boto3.client('iam')
+        else:
+            self.client = boto3.client('iam', region=region)
         self.available_checks = self.available_checks()
+
 
     @staticmethod
     def available_checks():
