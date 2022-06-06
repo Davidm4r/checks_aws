@@ -59,14 +59,14 @@ iam-user-two-active-access-key
 iam-user-with-password-and-key
 iam-policy-allows-privilege-escalation
 '''
+from checks.check import Check, Client
 
-class CheckClient():
-    def __init__(self, region=""):
-        if region:
-            self.client = boto3.client('iam')
-        else:
-            self.client = boto3.client('iam', region=region)
+
+class CheckClient:
+    def __init__(self, region_name=None):
+        self.client_iam = Client('iam', region_name=region_name).client
         self.available_checks = self.available_checks()
+        self.list_users = self.client_iam.list_users()
 
 
     @staticmethod
@@ -74,9 +74,9 @@ class CheckClient():
         return ["IamDisable90DaysCredentials", "IamDisable30DaysCredentials"]
 
 
-class IamDisable90DaysCredentials(Check):
-
+class IamDisable90DaysCredentials(Check, CheckClient):
     def title(self):
+        print(f" Cliente 90 {self.client_iam}")
         return "iam-disable-90-days-credentials"
 
     def description(self):
@@ -86,7 +86,7 @@ class IamDisable90DaysCredentials(Check):
         return "High"
 
     def execute(self):
-        response = self.client.list_users()
+        response = self.list_users
         for user in response['Users']:
             try:
                 time_since_insertion = datetime.datetime.now(datetime.timezone.utc) - user['PasswordLastUsed']
@@ -100,8 +100,10 @@ class IamDisable90DaysCredentials(Check):
                 pass
 
 
-class IamDisable30DaysCredentials(Check):
+class IamDisable30DaysCredentials(Check, CheckClient):
+
     def title(self):
+        print(f" Cliente 30 {self.client}")
         return "iam-disable-30-days-credentials"
 
     def description(self):
@@ -111,7 +113,7 @@ class IamDisable30DaysCredentials(Check):
         return "High"
 
     def execute(self):
-        response = self.client.list_users()
+        response = self.list_users
         for user in response['Users']:
             try:
                 time_since_insertion = datetime.datetime.now(datetime.timezone.utc) - user['PasswordLastUsed']

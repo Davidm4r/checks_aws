@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 boto3 = "==1.24.0"
 colorama = "*"
+dependency-injector = "*"
 
 [dev-packages]
 

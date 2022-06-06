@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-
+import boto3
 from enum import Enum
 
 
@@ -13,10 +13,15 @@ class Cloud(Enum):
     AWS = 'aws',
     GOOGLE = 'google',
 
+class Client:
+    def __init__(self, service, region_name=None):
+        if region_name:
+            self.client = boto3.client(service, region_name=region_name)
+        else:
+            self.client = boto3.client(service)
+
 
 class Check(ABC):
-    def __init__(self, client):
-        self.client = client
 
     @property
     @abstractmethod
